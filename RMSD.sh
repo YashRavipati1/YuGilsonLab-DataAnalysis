@@ -3,4 +3,4 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
-python RMSD.py "/Users/yashravipati/Downloads/PDBBind_processed/$1/$1_docked.pdbqt" "/Users/yashravipati/Downloads/$1.pdb"
+python RMSD.py "/Users/yashravipati/Downloads/PDBBind_processed/7gch/7gch_docked.pdbqt" "/Users/yashravipati/Downloads/RCSBpdbs/7gch.pdb"

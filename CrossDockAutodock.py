@@ -18,15 +18,16 @@ v = Vina(sf_name='vina', cpu = 6, seed = 12345)
 def dock_vina(receptor_file, ligand_file):
     v.set_receptor(receptor_file)
     v.set_ligand_from_file(ligand_file)
-    v.compute_vina_maps(center=[0, 0, 0], box_size=[20, 20, 20])
-    v.dock(exhaustiveness=32, n_poses=1, max_evals=1000000000)
-    v.write_poses(ligand_file[:len("/Users/yashravipati/Downloads/PDBBind_processed/") + 9] + "_docked.pdbqt", n_poses=1, overwrite=True)
+    v.compute_vina_maps(center=[-12, 0, -12], box_size=[30, 30, 30])
+    v.dock(exhaustiveness=32, n_poses=10, max_evals=1000000000)
+    v.write_poses("/Users/yashravipati/Downloads/PDBbind-CrossDocked-Refined/dataset/%d/%s/%s_prot/%s_docked.pdbqt" % (i, struct, struct, struct), n_poses=1, overwrite=True)
 
-root_dir = "/Users/yashravipati/Downloads/PDBBind_processed"
+root_dir = "/Users/yashravipati/Downloads/PDBbind-CrossDocked-Refined/dataset/"
 
-struct = "6s9w"
+struct = "5d21"
+i = 10
 
-dock_vina("/Users/yashravipati/Downloads/PDBBind_processed/" + struct + "/" + struct + "_protein_processed.pdb.pdbqt", "/Users/yashravipati/Downloads/PDBBind_processed/" + struct + "/" + struct + "_ligand.mol2.pdbqt")
+dock_vina("/Users/yashravipati/Downloads/PDBbind-CrossDocked-Refined/dataset/%d/%s/%s_prot/%s_p.pdbqt" % (i, struct, struct, struct), "/Users/yashravipati/Downloads/PDBbind-CrossDocked-Refined/dataset/%d/%s/%s_prot/%s_l.pdbqt" % (i, struct, struct, struct))
 
 # x = 0
 # for dirpath, dirnames, filenames in os.walk(root_dir):
