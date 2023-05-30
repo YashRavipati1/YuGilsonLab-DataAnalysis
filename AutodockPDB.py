@@ -1,7 +1,8 @@
-import os
 import subprocess
 from vina import Vina
-
+import sys, time, os
+import pymol
+import numpy
 
 v = Vina(sf_name='vina', cpu = 6, seed = 12345)
 
@@ -9,19 +10,32 @@ v = Vina(sf_name='vina', cpu = 6, seed = 12345)
 
 # v.set_ligand_from_file('/Users/yashravipati/Downloads/PDBBind_processed/1a4g/1a4g_ligand.mol2.pdbqt')
 # v.compute_vina_maps(center=[15.190, 53.903, 16.917], box_size=[20, 20, 20])
-
-def dock_vina(receptor_file, ligand_file):
-    v.set_receptor(receptor_file)
-    v.set_ligand_from_file(ligand_file)
-    v.compute_vina_maps(center=[-5, 25, 51], box_size=[30, 30, 30])
-    v.dock(exhaustiveness=64, n_poses=20, max_evals=1000000000)
-    v.write_poses(ligand_file[:len("/Users/yashravipati/Downloads/PDBBind_processed/") + 9] + "_docked.pdbqt", n_poses=1, overwrite=True)
-
 root_dir = "/Users/yashravipati/Downloads/PDBBind_processed"
 
-struct = "830c"
 
-dock_vina("/Users/yashravipati/Downloads/PDBBind_processed/" + struct + "/" + struct + "_protein_processed.pdb.pdbqt", "/Users/yashravipati/Downloads/PDBBind_processed/" + struct + "/" + struct + "_ligand.mol2.pdbqt")
+
+def dock_vina(receptor_file, ligand_file, name, center):
+    v.set_receptor(receptor_file)
+    v.set_ligand_from_file(ligand_file)
+    v.compute_vina_maps(center=center, box_size=[30,30,30])
+    try:
+        v.dock(exhaustiveness=64, n_poses=1, max_evals=500000)
+    except:
+        print("Error")
+    v.write_poses("/Users/yashravipati/Downloads/VinaOutputs/" + name, n_poses=1, overwrite=True)
+
+for subdir, dirs, files in os.walk(root_dir):
+    struct = subdir[len(root_dir):]
+    filename = root_dir + struct + "/" + struct + "_protein_processed.pdb"
+    if(struct == ""):
+        continue
+    center = numpy.genfromtxt(filename, skip_header=1, usecols=[6, 7, 8])
+    center = center.mean(axis=0)
+    print(center)
+    try:
+        dock_vina(root_dir + struct + "/" + struct + "_protein_processed.pdb.pdbqt", root_dir + struct + "/" + struct + "_ligand.mol2.pdbqt", struct, center)
+    except:
+        continue
 
 # x = 0
 # for dirpath, dirnames, filenames in os.walk(root_dir):
