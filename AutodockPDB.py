@@ -19,20 +19,24 @@ def dock_vina(receptor_file, ligand_file, name, center):
     v.set_ligand_from_file(ligand_file)
     v.compute_vina_maps(center=center, box_size=[30,30,30])
     try:
-        v.dock(exhaustiveness=64, n_poses=1, max_evals=500000)
+        v.dock(exhaustiveness=16, n_poses=1, max_evals=500000)
     except:
         print("Error")
     v.write_poses("/Users/yashravipati/Downloads/VinaOutputs/" + name, n_poses=1, overwrite=True)
 
+i = 0
 for subdir, dirs, files in os.walk(root_dir):
+    i+=1
+    if i<350:
+        continue
     struct = subdir[len(root_dir):]
     filename = root_dir + struct + "/" + struct + "_protein_processed.pdb"
     if(struct == ""):
         continue
     center = numpy.genfromtxt(filename, skip_header=1, usecols=[6, 7, 8])
     center = center.mean(axis=0)
-    print(center)
     try:
+        print(struct)
         dock_vina(root_dir + struct + "/" + struct + "_protein_processed.pdb.pdbqt", root_dir + struct + "/" + struct + "_ligand.mol2.pdbqt", struct, center)
     except:
         continue
